@@ -6,9 +6,7 @@ Take complicated or deeply nested JSON/XML data, and transform it into generic o
 Example
 ======
 ```python
-	api_data = '{"user":
-			{"profile":
-				{"description": "a basic user profile description"}{
+api_data = '{
     "user":{
         "profile":{
             "description":"a basic user profile description",
