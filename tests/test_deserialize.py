@@ -5,6 +5,7 @@ from deserialize import deserialize
 class TestDeserializer(unittest.TestCase):
     def setUp(self):
         self.test_json = '{"object":{"key":{"test_data":10}}}'
+        self.test_json_array = '{"thing":[{"key1":"val1"}, {"key2":"val2"}]}'
         self.test_xml = """
                         <DATA>
                            <NODE1>
@@ -32,6 +33,14 @@ class TestDeserializer(unittest.TestCase):
 
         # ensure the value is properly assigned
         self.assertEqual(10, json_object.object.key.test_data)
+
+    def test_array_from_json(self):
+        json_object = deserialize.fromJSON(self.test_json_array)
+
+        self.assertTrue(hasattr(json_object, 'thing'))
+        self.assertTrue(isinstance(json_object.thing, list))
+
+        self.assertEqual(json_object.thing[0]['key1'], 'val1')
 
     def test_from_xml(self):
         xml_object = deserialize.fromXML(self.test_xml)

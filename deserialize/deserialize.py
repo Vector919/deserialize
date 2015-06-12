@@ -13,13 +13,20 @@ class XMLData(object):
 def _recurse_json_keys(data, keys_object):
     """
     Collect all of the keys from the given JSON data,
-    by recursively searching the heirarchy
+    by recursively searching the hierarchy
     """
-    for key in data.keys():
-        if isinstance(data[key], dict):
+    for key in data:
+        if not isinstance(data, list) and isinstance(data[key], dict):
             top_key = JSONdata()
             setattr(keys_object, key, top_key)
             _recurse_json_keys(data[key], top_key)
+        elif isinstance(key, dict):
+            top_list = []
+            for element in data:
+                top_element = JSONdata()
+                _recurse_json_keys(element, top_element)
+                top_list.append(top_element)
+            setattr(keys_object, key, top_list)
         else:
             setattr(keys_object, key, data[key])
 
