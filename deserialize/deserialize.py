@@ -13,13 +13,20 @@ class XMLData(object):
 def _recurse_json_keys(data, keys_object):
     """
     Collect all of the keys from the given JSON data,
-    by recursively searching the hierarchy
+    by recursively searching the hierarchy, and attaching
+    child keys to a parent object
+
+    Args:
+        keys_object: parent object to set attrs/child objects of
+        data: the remaining parsed json data to create objects from
     """
     for key in data:
+
         if not isinstance(data, list) and isinstance(data[key], dict):
             top_key = JSONdata()
             setattr(keys_object, key, top_key)
             _recurse_json_keys(data[key], top_key)
+
         elif isinstance(key, dict):
             top_list = []
             for element in data:
@@ -27,11 +34,16 @@ def _recurse_json_keys(data, keys_object):
                 _recurse_json_keys(element, top_element)
                 top_list.append(top_element)
             setattr(keys_object, key, top_list)
+
         else:
             setattr(keys_object, key, data[key])
 
 
 def _recurse_xml_keys(xml_root, top_key):
+    """
+    Recursively set all of the child nodes
+    from an XML object
+    """
     for child in xml_root:
         if len(child):
             child_object = XMLData()
@@ -39,7 +51,6 @@ def _recurse_xml_keys(xml_root, top_key):
             _recurse_xml_keys(child, child_object)
         else:
             setattr(top_key, child.tag, child.text)
-
 
 def fromJSON(data):
     """
