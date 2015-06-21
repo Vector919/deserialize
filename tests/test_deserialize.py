@@ -42,6 +42,10 @@ class TestDeserializer(unittest.TestCase):
 
         self.assertEqual(json_object.thing[0]['key1'], 'val1')
 
+    def test_json_config(self):
+        json_object = deserialize.fromJSON(self.test_json, config={'test_data': lambda x: x+2})
+        self.assertEqual(json_object.object.key.test_data, 12)
+
     def test_from_xml(self):
         xml_object = deserialize.fromXML(self.test_xml)
 
