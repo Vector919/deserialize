@@ -6,6 +6,7 @@ class TestDeserializer(unittest.TestCase):
     def setUp(self):
         self.test_json = '{"object":{"key":{"test_data":10}}}'
         self.test_json_array = '{"thing":[{"key1":"val1"}, {"key2":"val2"}]}'
+        self.test_flat_json = '{"keyval.keypair.keynum":200}'
         self.test_xml = """
                         <DATA>
                            <NODE1>
@@ -33,6 +34,20 @@ class TestDeserializer(unittest.TestCase):
 
         # ensure the value is properly assigned
         self.assertEqual(10, json_object.object.key.test_data)
+
+    def test_from_flat_json(self):
+        """
+        Ensure the proper keys get created from a flat JSON structure
+        """
+        json_object = deserialize.fromFlatJSON(self.test_flat_json)
+
+        self.assertTrue(hasattr(json_object, 'keyval'))
+        self.assertTrue(hasattr(json_object.keyval, 'keypair'))
+        self.assertTrue(hasattr(json_object.keyval.keypair, 'keynum'))
+
+        self.assertEqual(json_object.keyval.keypair.keynum, 200)
+
+
 
     def test_array_from_json(self):
         json_object = deserialize.fromJSON(self.test_json_array)
