@@ -58,6 +58,8 @@ def _recurse_xml_keys(xml_root, top_key):
             setattr(top_key, child.tag, child.text)
 
 
+
+
 def fromJSON(data, config={}):
     """
     Take a JSON string, and return nested objects representing the
@@ -77,3 +79,35 @@ def fromXML(data):
     top_level = XMLData()
     _recurse_xml_keys(xml_data, top_level)
     return top_level
+
+def fromFlatJSON(data):
+    """
+    Generate a generic object from a flat json structure with dot notation
+    Example
+    {
+        'key.key1.key2': "value"
+    }
+
+    >> json_object.key.key1.key2
+
+    allows for representing a complex structure without using nested keys
+    """
+    json_data = json.loads(data)
+    top_key = JSONdata()
+
+    for key in json_data:
+        object_nodes = key.split(".")
+        last_key = top_key
+        for n in xrange(0, len(object_nodes)+1):
+            if len(object_nodes) == 1:
+                last_node = object_nodes.pop(0)
+                setattr(last_key, last_node, json_data[key])
+
+            elif object_nodes:
+                last_node = object_nodes.pop(0)
+                final_key = JSONdata()
+                setattr(last_key, last_node, final_key)
+                last_key = final_key
+            else:
+                continue
+    return top_key
